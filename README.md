@@ -1,10 +1,14 @@
 # reMARS-MiniPupper
 
+The structure of this README is the same as jetbot:
+
+[refefence: jetbot](https://catalog.us-east-1.prod.workshops.aws/workshops/fa208b8e-83d6-4cc1-8356-bfa5b6184fae/en-US/deploy-and-run/prepare-robot)
+
 ## Activity 1: Simulate the Dance Robot
 
 ### Step 1: Setup the RoboMaker IDE
 
-...
+choose **ROS Melodic**
 
 ### Step 2: Build the Robot and Simulation Applications
 
@@ -12,7 +16,7 @@
 
 ```sh
 cd ~/environment
-git clone https://github.com/0nhc/reMARS-MiniPupper.git
+git clone https://github.com/mangdangroboticsclub/reMARS-MiniPupper.git
 ```
 
 * Install Dependencies
@@ -48,12 +52,6 @@ export DISPLAY=:1
 source /opt/ros/melodic/setup.bash
 source ~/environment/reMARS-MiniPupper/simulation_ws/install/setup.bash
 source ~/environment/reMARS-MiniPupper/robot_ws/install/setup.bash
-roslaunch mini_pupper_simulation gazebo.launch
-```
-if failed, try
-```sh
-# terminal 1
-export DISPLAY=:0
 roslaunch mini_pupper_simulation gazebo.launch
 ```
 
@@ -150,7 +148,7 @@ roslaunch mini_pupper_simulation gazebo.launch
 ```
 
 ```sh
-# terminal 2, build, source and launch robot application
+# terminal 2, launch robot application
 source /opt/ros/melodic/setup.bash
 source ~/environment/reMARS-MiniPupper/simulation_ws/install/setup.bash
 source ~/environment/reMARS-MiniPupper/robot_ws/install/setup.bash
@@ -165,4 +163,41 @@ source /opt/ros/melodic/setup.bash
 rostopic pub /dance_config std_msgs/String "data: 'my_demo'"     
 ```
 
-### 
+## Activity 2: Deploy and Run the Dance Robot
+
+I haven't done this greengrass part yet due to the internet. If you want to test the dancing routines on real robot, you can follow instructions below. The repository cloned on real robot is the same repository cloned in RoboMaker (this repo).
+
+```sh
+# on Mini Pupper's Terminal
+# clone this repo
+# if you are using the SD card image Afreez supplied, there's no need to execute these commands
+cd ~
+git clone https://github.com/mangdangroboticsclub/reMARS-MiniPupper.git
+cd reMARS-MiniPupper/robot_ws
+catkin_make
+```
+
+```sh
+# terminal 1
+source /opt/ros/noetic/setup.bash
+source ~/reMARS-MiniPupper/robot_ws/devel/setup.bash
+roslaunch mini_pupper_dance dance.launch dance_config_path:=/home/ubuntu/reMARS_MiniPupper/routines
+```
+
+```sh
+# terminal 2
+source /opt/ros/melodic/setup.bash
+rostopic pub /dance_config std_msgs/String "data: 'demo'"     
+```
+
+As for controlling servos in Docker, I successfully controlled servos in Docker before by executing these commands.
+
+[Reference README for creating Docker Container](https://github.com/0nhc/mini_pupper_scripts/blob/master/create_container.sh)
+
+remember to mount these two volumes when creating Docker Container if you want to control servos
+
+```sh
+	-v /sys/class/pwm:/sys/class/pwm \
+	-v /sys/bus/i2c/devices/3-0050/eeprom:/sys/bus/i2c/devices/3-0050/eeprom \
+```
+
